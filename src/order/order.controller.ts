@@ -8,7 +8,7 @@ import {
   Param,
   Post,
   Put,
-  Query, UseGuards,
+  Query, Res, UseGuards,
   ValidationPipe
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
@@ -17,6 +17,7 @@ import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { ListQueryParamsDto } from "../core/dto/list-query-params.dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { Response } from "express";
 
 @Controller("orders")
 export class OrderController {
@@ -28,16 +29,22 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
-  public getAll(
+  public async getAll(
     @Query(new ValidationPipe({
       transform: true,
       transformOptions: {
         enableImplicitConversion: false
       },
       forbidNonWhitelisted: true
-    })) query: ListQueryParamsDto
-  ): Promise<Order[]> {
-    return this.orderService.getAll(query);
+    })) query: ListQueryParamsDto,
+    @Res() res: Response
+  ): Promise<Response> {
+    const { count, items } = await this.orderService.getAll(query || {} as any);
+
+    res.header( 'items-count', count.toString());
+    res.json(items);
+
+    return res;
   }
 
   @UseGuards(JwtAuthGuard)

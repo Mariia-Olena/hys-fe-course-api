@@ -7,7 +7,6 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { HttpException } from "@nestjs/common/exceptions/http.exception";
 import { BaseControllerService } from "../core/base/base-controller.service";
 import { ListQueryParamsDto } from "../core/dto/list-query-params.dto";
-import { use } from "passport";
 
 @Injectable()
 export class UsersService {
@@ -17,8 +16,11 @@ export class UsersService {
 
   public async getAll(
     query: ListQueryParamsDto
-  ): Promise<User[]> {
-    return BaseControllerService.getAll<User>(this.model, query);
+  ): Promise<{ items: User[], count: number }> {
+    return {
+      count: await this.model.countDocuments(),
+      items: await BaseControllerService.getAll<User>(this.model, query)
+    };
   }
 
   public async findOne(username: string): Promise<User | undefined> {

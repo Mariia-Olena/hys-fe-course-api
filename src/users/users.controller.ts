@@ -8,7 +8,7 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put, Query,
+  Put, Query, Res,
   UseGuards, ValidationPipe
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
@@ -18,6 +18,7 @@ import { User } from "./shemas/users.schema";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { HttpException } from "@nestjs/common/exceptions/http.exception";
 import { ListQueryParamsDto } from "../core/dto/list-query-params.dto";
+import { Response } from "express";
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -30,16 +31,22 @@ export class UsersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  public getAll(
+  public async getAll(
     @Query(new ValidationPipe({
       transform: true,
       transformOptions: {
         enableImplicitConversion: false
       },
       forbidNonWhitelisted: true
-    })) query: ListQueryParamsDto
-  ): Promise<User[]> {
-    return this.usersService.getAll(query);
+    })) query: ListQueryParamsDto,
+    @Res() res: Response
+  ): Promise<Response> {
+    const { count, items } = await this.usersService.getAll(query || {} as any);
+
+    res.header( 'items-count', count.toString());
+    res.json(items);
+
+    return res;
   }
 
   @Get(':id')

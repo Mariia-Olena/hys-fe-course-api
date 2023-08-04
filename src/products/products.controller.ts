@@ -37,10 +37,11 @@ export class ProductsController {
     })) query: ListQueryParamsDto,
     @Res() res: Response
   ): Promise<Response> {
-    const { allProductsCount, productsByQuery } = await this.productsService.getAll(query || {} as any);
+    const { count, items } = await this.productsService.getAll(query || {} as any);
 
-    res.header( 'all-products', allProductsCount.toString());
-    res.json(productsByQuery);
+    res.header( 'all-products', count.toString());
+    res.json(items);
+
     return res;
   }
 
