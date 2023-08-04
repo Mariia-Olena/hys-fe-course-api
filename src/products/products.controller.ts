@@ -39,7 +39,7 @@ export class ProductsController {
   ): Promise<Response> {
     const { count, items } = await this.productsService.getAll(query || {} as any);
 
-    res.header( 'all-products', count.toString());
+    res.header( 'items-count', count.toString());
     res.json(items);
 
     return res;
