@@ -24,7 +24,17 @@ export abstract class BaseControllerService {
 
         return {
           ...acc,
-          ...(filterKey && filterProp ? {
+
+          ...( filterKey === 'price' && filterProp && {
+            $expr: {
+              $regexMatch: {
+                input: { $toString: `$${filterKey}` },
+                regex: filterProp,
+                options: "i"
+              }
+            }
+          }),
+          ...(filterKey && filterKey !== 'price' && filterProp ? {
             [filterKey]: { "$regex": filterProp, "$options": "i" }
           } : {} )
         }
