@@ -6,9 +6,9 @@ import * as bcrypt from "bcrypt";
 
 export abstract class BaseControllerService {
   public static async getAll<T>(
-    model,
+    model: Model<any>,
     query: ListQueryParamsDto,
-  ): Promise<T[]> {
+  ): Promise<{ items: T[], count: number }> {
     const
       limit: number = query && query.limit || 200,
       sort: string = query && query.sort || 'createdAt',
@@ -31,12 +31,15 @@ export abstract class BaseControllerService {
       }, {})
       : {};
 
-    return model
-      .find(filterObj)
-      .limit(limit)
-      .sort(sort)
-      .skip((page - 1) * limit)
-      .exec();
+    return {
+      count: (await model.find(filterObj).exec()).length,
+      items: await model
+        .find(filterObj)
+        .limit(limit)
+        .sort(sort)
+        .skip((page - 1) * limit)
+        .exec()
+    }
   }
 
   public static validateNoEntity(

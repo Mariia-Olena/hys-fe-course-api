@@ -16,10 +16,7 @@ export class ProductsService {
   public async getAll(
     query: ListQueryParamsDto
   ): Promise<{ items: Product[], count: number }> {
-    return {
-      count: await this.model.countDocuments(),
-      items: await BaseControllerService.getAll<Product>(this.model, query)
-    };
+    return await BaseControllerService.getAll<Product>(this.model, query);
   }
 
   public async getById(id: string): Promise<Product> {

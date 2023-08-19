@@ -17,10 +17,7 @@ export class UsersService {
   public async getAll(
     query: ListQueryParamsDto
   ): Promise<{ items: User[], count: number }> {
-    return {
-      count: await this.model.countDocuments(),
-      items: await BaseControllerService.getAll<User>(this.model, query)
-    };
+    return await BaseControllerService.getAll<User>(this.model, query);
   }
 
   public async findOne(username: string): Promise<User | undefined> {

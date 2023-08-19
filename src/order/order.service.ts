@@ -16,10 +16,7 @@ export class OrderService {
   public async getAll(
     query: ListQueryParamsDto
   ): Promise<{ items: Order[], count: number }> {
-    return {
-      count: await this.model.countDocuments(),
-      items: await BaseControllerService.getAll<Order>(this.model, query)
-    };
+    return await BaseControllerService.getAll<Order>(this.model, query);
   }
 
   public async getById(id: string): Promise<Order> {
