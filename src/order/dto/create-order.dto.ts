@@ -6,7 +6,7 @@ import {
   ArrayUnique,
   IsArray,
   IsDefined, IsMobilePhone,
-  IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length, ValidateNested
+  IsNotEmpty, IsNotEmptyObject, IsObject, IsOptional, IsPhoneNumber, IsString, Length, ValidateNested
 } from "class-validator";
 
 export class CreateOrderDto {
@@ -37,4 +37,9 @@ export class CreateOrderDto {
   @IsString()
   @IsOptional()
   readonly message: string;
+
+  @IsOptional()
+  @IsObject()
+  @IsNotEmptyObject()
+  readonly extraInfo: any;
 }
